@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Checks to see if battery folders exist, if not, will exit with error
+[ ! -e /sys/class/power_supply/BAT?* ] && echo "No battery found" && exit 1
+
+# Defines the formatting for the info from the battery folders
+format()
+{
+	# Will make a warn variable if discharging and low
+	[ $(cat "$1/status") = "Discharging" ] && [ $(cat "$1/capacity") -le 25 ] && local warn="❗ "
+	# Sets up the status and capacity with sed
+	status=$(sed "s/,//; s/Full/⚡ /;s/Discharging/🔋 /;s/Unknown/❓ /; s/Charging/🔌 /" "$1/status")
+	capacity=$(cat $1/capacity)
+	# Prints the info
+	printf "%s%s%d%%\n" "$warn" "$status" "$capacity"
+}
+
+# Loops through all of the batteries and formats them
+for battery in /sys/class/power_supply/BAT?*
+do
+	format $battery
+done && return 0

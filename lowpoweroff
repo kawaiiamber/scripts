@@ -1,0 +1,8 @@
+#!/bin/sh
+
+while :
+do
+	[ $(cat /sys/class/power_supply/BAT0/capacity) -le 5 ] && [ $(cat /sys/class/power_supply/BAT0/status) = "Discharging" ] && notify-send -u critical "Computer will shut down soon..."
+	[ $(cat /sys/class/power_supply/BAT0/capacity) -le 3 ] && [ $(cat /sys/class/power_supply/BAT0/status) = "Discharging" ] && sudo poweroff
+	sleep 10
+done

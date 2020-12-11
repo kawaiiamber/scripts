@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Checks if directories are detected
+[ ! -e /sys/class/power_supply/BAT?* ] && exit 1
+
+# Initialize the notified variable to FALSE
+notified=/dev/shm/batalert
+
+echo "FALSE" > $notified
+
+while :
+do
+
+# Loops through all of the batteries if there are multiple
+for battery in /sys/class/power_supply/BAT?*
+do
+
+if [ $(cat /sys/class/power_supply/BAT0/status) = "Discharging" ]
+then
+	if [ $(cat /sys/class/power_supply/BAT0/capacity) -le 10 ] && [ $(cat $notified) = "FALSE" ]
+	then
+		notify-send -u critical "Battery $(echo $battery | sed "s/\/sys\/class\/power\_supply\/BAT//") is critically low"
+		echo "TRUE" > $notified
+	fi
+else
+	echo "FALSE" > $notified
+fi
+
+done
+
+sleep 5s
+done
