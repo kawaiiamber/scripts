@@ -5,16 +5,16 @@ state=$(amixer get Master | tail -n 1 | awk -F"[][]" '{print $6}')
 
 if [ $state = "off" ]
 then
-	printf "%s%%\n" "🔇 $level"
+	printf "%s%d%%\n" "🔇 " "$level"
 else
 	if [ $level -le 33 ]
 	then
-		printf "%s%%\n" "🔈 $level"
+		printf "%s%d%%\n" "🔈 " "$level"
 	elif [ $level -gt 33 ] && [ $level -le 66 ]
 	then
-		printf "%s%%\n" "🔉 $level"
+		printf "%s%d%%\n" "🔉 " "$level"
 	elif [ $level -gt 66 ]
 	then
-		printf "%s%%\n" "🔊 $level"
+		printf "%s%d%%\n" "🔊 " "$level"
 	fi
 fi
